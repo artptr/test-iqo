@@ -6,17 +6,21 @@ const IO = require('socket.io');
 const app = new Koa();
 app.use(files('client/dist'));
 
-const server = Server(app.callback());
-const io = IO(server);
+const server = new Server(app.callback());
+const io = new IO(server);
 
-io.on('connection', socket => {
-    socket.on('message', message => {
-        console.log(message);
+const history = [];
+
+io.on('connection', (socket) => {
+    socket.on('message', (message) => {
+        Object.assign(message, {
+            time: Date(),
+        });
+
+        history.push(message);
+
+        socket.emit('message', message);
     });
-    
-    setTimeout(() => {
-        socket.emit('message', { name: 'John Doe', text: 'qwerty' });
-    }, 1000);
 });
 
 server.listen(3000);

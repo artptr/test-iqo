@@ -22,6 +22,7 @@ class Chat extends PureComponent {
                 return;
             }
 
+            this.input.value = '';
             this.props.onSend(msg);
         };
     }
